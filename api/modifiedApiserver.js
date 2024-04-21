@@ -18,41 +18,6 @@ app.use(cors({
   }));
 app.use(express.json());
 
-app.get('/api/queryallcars', async (req, res) => {
-    try {
-        // Create a new file system based wallet for managing identities.
-        //const walletPath = '/home/mash/fabric14/fabric-samples/fabcar/javascript/wallet';
-        //const wallet = new FileSystemWallet(walletPath);
-        //console.log(`Wallet path: ${walletPath}`);
-
-        // Check if the user identity named "admin" exists in the wallet.
-        const userIdentity = await wallet.exists('admin');
-        if (!userIdentity) {
-            console.log('An identity for the user "admin" does not exist in the wallet');
-            console.log('Run the registerUser.js application before retrying');
-            return res.status(400).json({ error: 'User identity not found' });
-        }
-
-        // Create a new gateway for connecting to our peer node.
-        const gateway = new Gateway();
-        await gateway.connect(ccpPath, { wallet, identity: 'admin', discovery: { enabled: true, asLocalhost: true } });
-
-        // Get the network (channel) our contract is deployed to.
-        const network = await gateway.getNetwork('mychannel');
-
-        // Get the contract from the network.
-        const contract = network.getContract('fabcar');
-
-        // Evaluate the "queryAllCars" transaction (no arguments).
-        const result = await contract.evaluateTransaction('queryAllCars');
-        console.log(JSON.parse(result)[0]["Record"]);
-        console.log(`Transaction has been evaluated, result is: ${result.toString()}`);
-        return res.status(200).json({ response: result.toString() });
-    } catch (error) {
-        console.error(`Failed to evaluate transaction: ${error}`);
-        return res.status(500).json({ error: error.message });
-    }
-});
 
 app.get('/api/queryallfertilizers', async (req, res) => {
     try {
@@ -200,12 +165,7 @@ app.post('/api/changeowner', async (req, res) => {
 
 app.get('/api/querypendingorders', async (req, res) => {
     try {
-        // Create a new file system based wallet for managing identities.
-        const walletPath = '/home/mash/fabric14/fabcar/javascript/wallet';
-        const wallet = new FileSystemWallet(walletPath);
-        console.log(`Wallet path: ${walletPath}`);
-
-        // Check if the user identity named "admin" exists in the wallet.
+        
         const userIdentity = await wallet.exists('admin');
         if (!userIdentity) {
             console.log('An identity for the user "admin" does not exist in the wallet');
@@ -224,7 +184,7 @@ app.get('/api/querypendingorders', async (req, res) => {
         const contract = network.getContract('fabcar'); // Replace 'fabcar' with your actual contract name
 
         // Query all pending orders.
-        const result = await contract.evaluateTransaction('queryPendingOrders');
+        const result = await contract.evaluateTransaction('queryAllPendingOrders');
         const pendingOrders = JSON.parse(result.toString());
 
         // Disconnect from the gateway.
